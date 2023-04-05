@@ -1,4 +1,4 @@
-import graphs.Graph;
+import graphs.GraphFromMap;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +19,8 @@ public class WayBetweenBuildings {
             line1[i] = Integer.parseInt(arr[i]);
         }
 
-        Graph graph = new Graph(line1[0]);
+        GraphFromMap graph = new GraphFromMap(line1[0]);
+        boolean[] marked = new boolean[line1[0]];
         for (int i = 0; i < line1[1]; i++) {
             String[] split = br.readLine().split(" ");
             int first = Integer.parseInt(split[0]);

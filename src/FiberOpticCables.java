@@ -40,24 +40,24 @@
 */
 
 
+import algos.KruskalsAlgo;
 import graphs.WeightedEdge;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayDeque;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.PriorityQueue;
 
 public class FiberOpticCables {
     public static void main(String[] args) {
 
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//            String test = "4 5\n" + "2 1 5\n" + "3 2 10\n" + "4 3 8\n" + "4 1 7\n" + "4 2 2\n";
-//            Reader inputString = new StringReader(test);
-//            BufferedReader br = new BufferedReader(inputString);
+//            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            String test = "4 5\n" + "2 1 5\n" + "3 2 10\n" + "4 3 8\n" + "4 1 7\n" + "4 2 2\n";
+            Reader inputString = new StringReader(test);
+            BufferedReader br = new BufferedReader(inputString);
 
 
             int[] line1 = new int[2];
@@ -76,20 +76,17 @@ public class FiberOpticCables {
             for (int i = 0; i < line1[1]; i++) {
 
                 String[] strings = br.readLine().split("\s");
-                int[] values = new int[3];
-                values[0] = Integer.parseInt(strings[0]);
-                values[1] = Integer.parseInt(strings[1]);
-                values[2] = Integer.parseInt(strings[2]);
-                WeightedEdge we = new WeightedEdge(values[0], values[1], values[2]);
-                graph.get(values[0]).add(we);
-                graph.get(values[1]).add(we);
+                int first = Integer.parseInt(strings[0]);
+                int other = Integer.parseInt(strings[1]);
+                int weight = Integer.parseInt(strings[2]);
+                WeightedEdge we = new WeightedEdge(first, other, weight);
+                graph.get(first).add(we);
+                graph.get(other).add(we);
             }
 
-            var finder = new PrimsAlgo(graph, line1[0]);
+            KruskalsAlgo finder = new KruskalsAlgo(graph, 5);
             System.out.println(finder.run());
-
-
-//            int[] mst = new int[line1[0] - 1];
+//            algos.PrimsAlgo finder = new algos.PrimsAlgo(graph, line1[0]);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -97,59 +94,3 @@ public class FiberOpticCables {
     }
 }
 
-class PrimsAlgo {
-
-    // Line 1, [0] is number of building/nodes
-    // Line 1, [1] is number of cables/edges
-    // Line 2..m, [0] is cable from building
-    // Line 2..m, [1] is cable to building
-    // Line 2..m, [2] is cable cost
-    List<List<WeightedEdge>> graph;
-    boolean[] markedBuildings;
-
-    // Priority queue over all discovered edges.
-    PriorityQueue<WeightedEdge> pq = new PriorityQueue<WeightedEdge>();
-    ArrayDeque<WeightedEdge> mst = new ArrayDeque<>();
-
-    PrimsAlgo(List<List<WeightedEdge>> graph, int k) {
-        this.graph = graph;
-        this.markedBuildings = new boolean[k + 1];
-        for (int i = 1; i < markedBuildings.length; i++) {
-            markedBuildings[i] = false;
-        }
-    }
-
-    int run() {
-        visit(graph, 1);
-        while (!pq.isEmpty()) {
-            WeightedEdge e = pq.remove();
-            int n = e.get();
-            int m = e.getOther(n);
-            if (!(markedBuildings[n] && markedBuildings[m])) {
-                mst.add(e);
-            }
-            if (!markedBuildings[n]) {
-                visit(graph, n);
-            }
-            if (!markedBuildings[m]) {
-                visit(graph, m);
-            }
-        }
-        int totalWeight = 0;
-        for (WeightedEdge el : mst) {
-            int weight = el.getWeight();
-            totalWeight = totalWeight + weight;
-        }
-        return totalWeight;
-    }
-
-    private void visit(List<List<WeightedEdge>> graph, int i) {
-        markedBuildings[i] = true;
-        for (WeightedEdge e : graph.get(i)) {
-            if (!markedBuildings[e.other(i)] || !markedBuildings[i]) {
-                pq.add(e);
-            }
-        }
-
-    }
-}

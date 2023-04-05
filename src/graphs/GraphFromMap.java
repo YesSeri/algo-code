@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Graph {
+public class GraphFromMap {
     public HashMap<Integer, List<Integer>> adjacencyList = new HashMap<>();
 
-    public Graph(int size) {
+    public GraphFromMap(int size) {
         for (int i = 1; i <= size; i++) {
             this.adjacencyList.put(i, new ArrayList<>());
         }
